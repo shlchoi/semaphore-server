@@ -3,27 +3,7 @@ from math import ceil
 from time import time
 
 
-def process_data(db_url, email, secret, data):
-    if not isinstance(data, dict):
-        raise Exception('Data is not formatted properly')
-
-    if "mailbox" not in data:
-        raise Exception('Data does not contain a mailbox id')
-
-    letters = 0
-    magazines = 0
-    newspapers = 0
-    parcels = 0
-    mailbox_id = data["mailbox"]
-    if "letters" in data:
-        letters = data["letters"]
-    if "magazines" in data:
-        magazines = data["magazines"]
-    if "newspapers" in data:
-        newspapers = data["newspapers"]
-    if "parcels" in data:
-        parcels = data["parcels"]
-
+def process_data(db_url, email, secret, mailbox_id, letters=0, magazines=0, newspapers=0, parcels=0):
     prev_snapshot = firebase.load_snapshot(db_url, email, secret, mailbox_id)
 
     timestamp = int(ceil(time()))
@@ -36,7 +16,6 @@ def process_data(db_url, email, secret, data):
                           magazines,
                           newspapers,
                           parcels)
-
 
     letters_diff = 0
     magazines_diff = 0
@@ -61,7 +40,7 @@ def process_data(db_url, email, secret, data):
 
     firebase.put_delivery(db_url,
                           email,
-                         secret,
+                          secret,
                           mailbox_id,
                           timestamp,
                           letters_diff,

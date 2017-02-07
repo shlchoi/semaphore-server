@@ -1,52 +1,39 @@
-import socket
-import threading
 import util.client_handler as handler
-from json import load, dumps
+from json import load
 from os.path import isfile
+from flask import Flask, request, abort
 
 
-class Server(object):
-    def __init__(self, host, port, config_path='config'):
-        self._db_url = 'https://smartbox-041.firebaseio.com'
-        self._email = ''
-        self._secret = ''
-        self._host = host
-        self._port = port
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self._sock.bind((self._host, self._port))
-        if isfile(config_path):
-            self.load_config(config_path)
+app = Flask(__name__)
 
-    def load_config(self, config_path):
-        with open(config_path, 'r') as _txt_file:
+
+def load_config(path):
+    if isfile(path):
+        with open(path, 'r') as _txt_file:
             _data = load(_txt_file)
-            self._db_url = _data['db_url']
-            self._email = _data['email']
-            self._secret = _data['secret']
+            config = dict(DB_URL=_data['db_url'], EMAIL=_data['email'], SECRET=_data['secret'])
             _txt_file.close()
+            return config
+    return None
 
-    def listen(self):
-        self._sock.listen(5)
-        while True:
-            client, address = self._sock.accept()
-            client.settimeout(60)
-            threading.Thread(target=self.client, args=(client, address)).start()
 
-    def client(self, client, address):
-        size = 1024
-        while True:
-            try:
-                data = client.recv(size)
-                if data:
-                    handler.process_data(self._db_url, self._email, self._secret, data)
-                    client.send("OK")
-                else:
-                    raise Exception('Client disconnected')
-            except:
-                client.close()
-                return False
+@app.route("/", methods=['POST'])
+def snapshot():
+    if u'mailbox' not in request.json.keys():
+        abort(400, 'Mailbox ID was not provided')
+
+    mailbox = request.json.get(u'mailbox')
+
+    letters = int(request.json.get(u'letters', 0))
+    magazines = int(request.json.get(u'magazines', 0))
+    newspapers = int(request.json.get(u'newspapers', 0))
+    parcels = int(request.json.get(u'parcels', 0))
+
+    handler.process_data(app.config['DB_URL'], app.config['EMAIL'], app.config['SECRET'], mailbox,
+                         letters, magazines, newspapers, parcels)
+    return '', 200
 
 
 if __name__ == "__main__":
-    Server('', 8080).listen()
+    app.config.update(load_config('config'))
+    app.run(port=8080)
