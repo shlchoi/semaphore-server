@@ -11,7 +11,7 @@ def load_config(path):
     if isfile(path):
         with open(path, 'r') as _txt_file:
             _data = load(_txt_file)
-            config = dict(DB_URL=_data['db_url'], EMAIL=_data['email'], SECRET=_data['secret'])
+            config = dict(DB_URL=_data['db_url'], EMAIL=_data['email'], SECRET=_data['secret'], PORT=_data['port'])
             _txt_file.close()
             return config
     return None
@@ -41,4 +41,4 @@ def snapshot():
 
 if __name__ == "__main__":
     app.config.update(load_config('config'))
-    app.run(port=8080)
+    app.run(port=app.config['PORT'])

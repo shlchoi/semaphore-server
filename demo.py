@@ -21,13 +21,9 @@ def main():
             secret = _data['secret']
             _txt_file.close()
 
-    data = {"mailbox": "temp_fd5c7ba5-c2db-4923-8075-046cbead8173",
-            "letters": max(letters, 0),
-            "magazines": max(magazines, 0),
-            "newspapers": max(newspapers, 0),
-            "parcels": max(parcels, 0)}
-
-    handler.process_data(db_url, email, secret, data)
+    handler.process_data(db_url, email, secret,
+                         "temp_fd5c7ba5-c2db-4923-8075-046cbead8173",
+                         max(letters, 0), max(magazines, 0), max(newspapers, 0), max(parcels, 0))
 
 
 if __name__ == '__main__':
