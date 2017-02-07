@@ -17,6 +17,11 @@ def load_config(path):
     return None
 
 
+@app.route("/test")
+def test():
+    return "Running"
+
+
 @app.route("/", methods=['POST'])
 def snapshot():
     if u'mailbox' not in request.json.keys():
