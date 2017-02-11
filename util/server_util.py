@@ -1,7 +1,8 @@
 from json import load
 from os.path import isfile
 from flask import Flask, request, abort
-from util.client_handler import process_data
+from util.data_util import process_data
+from decorators.timing import time_run
 
 app = Flask(__name__)
 
@@ -13,6 +14,7 @@ def load_config(config_path):
     return None
 
 
+@time_run
 @app.route("/", methods=['POST'])
 def snapshot():
     if u'mailbox' not in request.json.keys():
