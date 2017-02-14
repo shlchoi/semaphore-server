@@ -13,6 +13,6 @@ def process_data(db_url, email, secret, mailbox_id,
     if len(prev_snap) > 0:
         prev_snap = prev_snap.values()[0]
         for k, v in prev_snap.iteritems():
-            if k in ['letters', 'magazines', 'newspaper', 'parcels']:
+            if k in ['letters', 'magazines', 'newspapers', 'parcels']:
                 params[k] = max(params[k] - v, 0)
     put_data(put_type='deliveries', **params)

@@ -37,7 +37,7 @@ def put_data(db_url, email, secret, mailbox_id, put_type='deliveries',
     fb_app = firebase.FirebaseApplication(db_url, authentication)
     if timestamp is None:
         timestamp = int(ceil(time()))
-    data = {'letters': letters, 'magazines': magazines,
+    data = {'timestamp': timestamp, 'letters': letters, 'magazines': magazines,
             'newspapers': newspapers, 'parcels': parcels}
     assert put_type in PUT_TYPES, 'put_type param not in {}'.format(PUT_TYPES)
     return fb_app.put('/{}/{}'.format(put_type, mailbox_id), timestamp, data)
