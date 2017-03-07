@@ -15,8 +15,7 @@ def process_data(db_url, email, secret, mailbox_id, timestamp=None,
     if len(prev_snap) > 0:
         prev_snap = prev_snap.values()[0]
 
-        while not (u'letters' in prev_snap or u'magazines' in prev_snap
-                   or u'newspapers' in prev_snap or u'parcels' in prev_snap):
+        while u'categorising' in prev_snap and prev_snap[u'categorising']:
             # wait 5 mins before retrying
             sleep(300)
             prev_snap = get_snapshot(db_url, email, secret, mailbox_id, timestamp)

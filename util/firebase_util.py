@@ -10,7 +10,7 @@ def notify(db_url, email, secret, mailbox_id, timestamp=None):
     fb_app = firebase.FirebaseApplication(db_url, authentication)
     if timestamp is None:
         timestamp = int(ceil(time()))
-    data = {'timestamp': timestamp}
+    data = {'timestamp': timestamp, 'categorising': True}
     for put_type in PUT_TYPES:
         fb_app.put('/{}/{}'.format(put_type, mailbox_id), timestamp, data)
     return timestamp
@@ -55,7 +55,6 @@ def put_data(db_url, email, secret, mailbox_id, put_type='deliveries',
 
 def get_snapshot(db_url, email, secret, mailbox_id, timestamp):
     """
-
     :param db_url:
     :param email:
     :param secret:
