@@ -1,9 +1,0 @@
-version: '2'
-services:
-  semaphore-server:
-    build: .
-    ports:
-    - "5000:5000"
-    volumes:
-    - .:/code
-

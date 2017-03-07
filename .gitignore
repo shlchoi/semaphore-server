@@ -3,3 +3,4 @@ config
 thumbs.db
 */thumbs.db
 *.DS_Store
+*.pyc

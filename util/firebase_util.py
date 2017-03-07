@@ -5,10 +5,20 @@ from time import time
 PUT_TYPES = ['deliveries', 'snapshots']
 
 
+def notify(db_url, email, secret, mailbox_id, timestamp=None):
+    authentication = firebase.FirebaseAuthentication(secret, email)
+    fb_app = firebase.FirebaseApplication(db_url, authentication)
+    if timestamp is None:
+        timestamp = int(ceil(time()))
+    data = {'timestamp': timestamp}
+    for put_type in PUT_TYPES:
+        fb_app.put('/{}/{}'.format(put_type, mailbox_id), timestamp, data)
+    return timestamp
+
+
 def put_data(db_url, email, secret, mailbox_id, put_type='deliveries',
              timestamp=None, letters=0, magazines=0, newspapers=0, parcels=0):
     """
-
     :param db_url:
     :param email:
     :param secret:
@@ -43,13 +53,14 @@ def put_data(db_url, email, secret, mailbox_id, put_type='deliveries',
     return fb_app.put('/{}/{}'.format(put_type, mailbox_id), timestamp, data)
 
 
-def get_snapshot(db_url, email, secret, mailbox_id):
+def get_snapshot(db_url, email, secret, mailbox_id, timestamp):
     """
 
     :param db_url:
     :param email:
     :param secret:
     :param mailbox_id:
+    :param timestamp:
     :return:
     :usage:
         >>> from json import load
@@ -60,7 +71,8 @@ def get_snapshot(db_url, email, secret, mailbox_id):
         >>> mailbox_id = tmp.get('mailbox_id')
         >>> get_snapshot(db_url, email, secret, mailbox_id)
     """
-    params = {'orderBy': '"$key"', 'limitToLast': 1}
+    # endAt parameter is used to get previous timestamp
+    params = {'orderBy': '"$key"',  'endAt': '"' + str(timestamp) + '"', 'limitToLast': 1}
     authentication = firebase.FirebaseAuthentication(secret, email)
     fb_app = firebase.FirebaseApplication(db_url, authentication)
     return fb_app.get('/snapshots/', mailbox_id, params=params)

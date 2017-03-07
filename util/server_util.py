@@ -2,7 +2,9 @@ from json import load
 from os.path import isfile
 from flask import Flask, request, abort
 from util.data_util import process_data
-from decorators.timing import time_run
+from util.img_util import is_empty, process_image
+from util.firebase_util import notify
+
 
 app = Flask(__name__)
 
@@ -14,9 +16,36 @@ def load_config(config_path):
     return None
 
 
-@time_run
-@app.route("/", methods=['POST'])
+@app.route("/")
+def ping():
+    return '', 200
+
+
+@app.route("/snapshot", methods=['POST'])
 def snapshot():
+
+    if u'mailbox' not in request.form:
+        abort(400, 'Image was not provided')
+
+    if u'snapshot' not in request.files:
+        abort(400, 'Image was not provided')
+
+    mailbox = request.form[u'mailbox']
+    image = request.files[u'snapshot']
+
+    if is_empty(image):
+        process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, None, 0, 0, 0, 0)
+    else:
+        timestamp = notify(app.config['db_url'], app.config['email'], app.config['secret'], mailbox)
+        letters, magazines, newspapers, parcels = process_image(image)
+        process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, timestamp,
+                     letters, magazines, newspapers, parcels)
+
+    return '', 200
+
+
+@app.route("/debug", methods=['POST'])
+def debug():
     if u'mailbox' not in request.json.keys():
         abort(400, 'Mailbox ID was not provided')
 
@@ -28,6 +57,6 @@ def snapshot():
     parcels = int(request.json.get(u'parcels', 0))
 
     process_data(app.config['db_url'], app.config['email'],
-                 app.config['secret'], mailbox,
+                 app.config['secret'], mailbox, None,
                  letters, magazines, newspapers, parcels)
     return '', 200
