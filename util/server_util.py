@@ -3,7 +3,7 @@ from os.path import isfile
 from flask import Flask, request, abort
 from util.data_util import process_data
 from util.img_util import is_empty, process_image
-from util.firebase_util import notify
+from multiprocessing import Process
 
 
 app = Flask(__name__)
@@ -23,9 +23,8 @@ def ping():
 
 @app.route("/snapshot", methods=['POST'])
 def snapshot():
-
     if u'mailbox' not in request.form:
-        abort(400, 'Image was not provided')
+        abort(400, 'Mailbox Id was not provided')
 
     if u'snapshot' not in request.files:
         abort(400, 'Image was not provided')
@@ -34,13 +33,13 @@ def snapshot():
     image = request.files[u'snapshot']
 
     if is_empty(image):
-        process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, None, 0, 0, 0, 0)
+        p = Process(target=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+                                               mailbox,))
+        p.start()
     else:
-        timestamp = notify(app.config['db_url'], app.config['email'], app.config['secret'], mailbox)
-        letters, magazines, newspapers, parcels = process_image(image)
-        process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, timestamp,
-                     letters, magazines, newspapers, parcels)
-
+        p = Process(target=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+                                                mailbox, image,))
+        p.start()
     return '', 200
 
 
