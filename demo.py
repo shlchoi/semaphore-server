@@ -1,30 +1,18 @@
-import util.data_util as handler
-from json import load
-from os.path import isfile
+from requests import post
 
 
 def main():
-    letters = input("Letters? ")
-    magazines = input("Magazines? ")
-    newspapers = input("Newspapers? ")
-    parcels = input("Parcels? ")
+    url = "http://ec2-54-175-148-98.compute-1.amazonaws.com:5000/snapshot"
+    headers = {'enctype': "multipart/form-data"}
+    files = {'snapshot': open("../test_letters.jpg")}
+    data = {'mailbox': "temp_fd5c7ba5-c2db-4923-8075-046cbead8173"}
 
-    db_url = ''
-    email = ''
-    secret = ''
+    request = post(url, headers=headers, data=data, files=files)
 
-    if isfile('config'):
-        with open('config', 'r') as _txt_file:
-            _data = load(_txt_file)
-            db_url = _data['db_url']
-            email = _data['email']
-            secret = _data['secret']
-            _txt_file.close()
-
-    handler.process_data(db_url, email, secret,
-                         "temp_fd5c7ba5-c2db-4923-8075-046cbead8173",
-                         max(letters, 0), max(magazines, 0), max(newspapers, 0), max(parcels, 0))
-
+    if request.status_code == 200:
+        print("Success")
+    else:
+        print("Failure")
 
 if __name__ == '__main__':
     main()
