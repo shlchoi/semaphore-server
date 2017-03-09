@@ -4,10 +4,11 @@ from flask import Flask, request, abort
 from util.data_util import process_data
 from util.img_util import is_empty, is_same, process_image
 from cv2 import imread, IMREAD_GRAYSCALE
-from multiprocessing import Process
+from multiprocessing import Process, Pool
 
 
 app = Flask(__name__)
+pool = Pool(processes=1)
 
 
 def load_config(config_path):
@@ -38,18 +39,25 @@ def snapshot():
 
     image.save(filename)
 
-    if is_empty(filename) or is_same(last_snapshot, filename):
-        print("is empty or is same")
-        #process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox)
-        p = Process(target=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
-                                               mailbox,))
-        p.start()
+    if not is_same(last_snapshot, filename):
+        if is_empty(filename):
+            print("is empty")
+            pool.apply_async(func=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+                                                      mailbox,))
+            #process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox)
+            # p = Process(target=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+            #                                        mailbox,))
+            # p.start()
+        else:
+            print("is new")
+            pool.apply_async(func=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+                                                       mailbox, filename,))
+            #process_image(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, filename)
+            # p = Process(target=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+            #                                         mailbox, filename,))
+            # p.start()
     else:
-        print("is new")
-        #process_image(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, filename)
-        p = Process(target=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
-                                                mailbox, filename,))
-        p.start()
+        print("is same")
     return '', 200
 
 

@@ -9,17 +9,18 @@ def is_empty(filename):
     result = absdiff(background, image)
     subtracted = inRange(result, 0x50, 0xff)
 
-    return countNonZero(subtracted) < 100
+    return countNonZero(subtracted) < 120
 
 
 def is_same(last_snapshot, filename):
     if last_snapshot is None:
         return False
+
     image = imread(filename, IMREAD_GRAYSCALE)
     result = absdiff(last_snapshot, image)
     subtracted = inRange(result, 0x50, 0xff)
 
-    return countNonZero(subtracted) < 100
+    return countNonZero(subtracted) < 120
 
 
 def categorise(filename):
