@@ -3,8 +3,8 @@ from util.data_util import process_data
 from cv2 import countNonZero, imread, IMREAD_GRAYSCALE, inRange, absdiff
 
 
-def is_empty(filename):
-    background = imread("bwempty.jpg", IMREAD_GRAYSCALE)
+def is_empty(mailbox_id, filename):
+    background = imread("empty_{0}.jpg".format(mailbox_id), IMREAD_GRAYSCALE)
     image = imread(filename, IMREAD_GRAYSCALE)
     result = absdiff(background, image)
     subtracted = inRange(result, 0x50, 0xff)

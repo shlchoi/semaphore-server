@@ -40,7 +40,7 @@ def snapshot():
     image.save(filename)
 
     if not is_same(last_snapshot, filename):
-        if is_empty(filename):
+        if is_empty(mailbox, filename):
             print("is empty")
             pool.apply_async(func=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
                                                       mailbox,))
@@ -50,6 +50,22 @@ def snapshot():
                                                        mailbox, filename,))
     else:
         print("is same")
+    return '', 200
+
+
+@app.route("/calibrate", methods=['POST'])
+def calibrate():
+    if u'mailbox' not in request.form:
+        abort(400, 'Mailbox Id was not provided')
+
+    if u'snapshot' not in request.files:
+        abort(400, 'Image was not provided')
+
+    mailbox = request.form[u'mailbox']
+    image = request.files[u'snapshot']
+
+    filename = u'empty_{0}.jpg'.format(mailbox)
+    image.save(filename)
     return '', 200
 
 
