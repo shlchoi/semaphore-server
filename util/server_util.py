@@ -42,12 +42,14 @@ def snapshot():
     if not is_same(last_snapshot, filename):
         if is_empty(mailbox, filename):
             print("is empty")
-            pool.apply_async(func=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
-                                                      mailbox,))
+            process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox,)
+            # pool.apply_async(func=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+            #                                           mailbox,))
         else:
             print("is new")
-            pool.apply_async(func=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
-                                                       mailbox, filename,))
+            process_image(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, filename,)
+            # pool.apply_async(func=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+            #                                            mailbox, filename,))
     else:
         print("is same")
     return '', 200

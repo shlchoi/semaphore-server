@@ -1,0 +1,3 @@
+[submodule "image_algorithm"]
+	path = image_algorithm
+	url = git@github.com:mattcwc/semaphore-raspi.git

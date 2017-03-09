@@ -2,4 +2,8 @@ flask
 request
 python-firebase
 opencv-python
-
+numpy
+pandas
+scikit-image
+matplotlib
+scipy
