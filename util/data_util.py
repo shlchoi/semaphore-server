@@ -8,10 +8,9 @@ def process_data(db_url, email, secret, mailbox_id, timestamp=None,
     if timestamp is None:
         timestamp = int(ceil(time()))
 
-    params = locals()
-    put_data(db_url, email, secret, mailbox_id, 'snapshots', timestamp, letters, magazines, newspapers, parcels)
+    prev_snap = get_snapshot(db_url, email, secret, mailbox_id, timestamp - 1)
 
-    prev_snap = get_snapshot(db_url, email, secret, mailbox_id, timestamp)
+    put_data(db_url, email, secret, mailbox_id, 'snapshots', timestamp, letters, magazines, newspapers, parcels)
     if len(prev_snap) > 0:
         prev_snap = prev_snap.values()[0]
 
@@ -21,8 +20,9 @@ def process_data(db_url, email, secret, mailbox_id, timestamp=None,
             prev_snap = get_snapshot(db_url, email, secret, mailbox_id, timestamp)
             prev_snap = prev_snap.values()[0]
 
-        for k, v in prev_snap.iteritems():
-            if k in ['letters', 'magazines', 'newspapers', 'parcels']:
-                params[k] = max(params[k] - v, 0)
-    put_data(db_url, email, secret, mailbox_id, 'deliveries', timestamp, params['letters'], params['magazines'],
-             params['newspapers'], params['parcels'])
+        letters = max(letters - prev_snap[u'letters'], 0)
+        magazines = max(magazines - prev_snap[u'magazines'], 0)
+        newspapers = max(newspapers - prev_snap[u'newspapers'], 0)
+        parcels = max(parcels - prev_snap[u'parcels'], 0)
+
+    put_data(db_url, email, secret, mailbox_id, 'deliveries', timestamp, letters, magazines, newspapers, parcels)

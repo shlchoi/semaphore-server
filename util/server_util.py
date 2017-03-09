@@ -4,7 +4,7 @@ from flask import Flask, request, abort
 from util.data_util import process_data
 from util.img_util import is_empty, is_same, process_image
 from cv2 import imread, IMREAD_GRAYSCALE
-from multiprocessing import Process, Pool
+from multiprocessing import Pool
 
 
 app = Flask(__name__)
@@ -44,18 +44,10 @@ def snapshot():
             print("is empty")
             pool.apply_async(func=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
                                                       mailbox,))
-            #process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox)
-            # p = Process(target=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
-            #                                        mailbox,))
-            # p.start()
         else:
             print("is new")
             pool.apply_async(func=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
                                                        mailbox, filename,))
-            #process_image(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, filename)
-            # p = Process(target=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
-            #                                         mailbox, filename,))
-            # p.start()
     else:
         print("is same")
     return '', 200
@@ -73,7 +65,6 @@ def debug():
     newspapers = int(request.json.get(u'newspapers', 0))
     parcels = int(request.json.get(u'parcels', 0))
 
-    process_data(app.config['db_url'], app.config['email'],
-                 app.config['secret'], mailbox, None,
+    process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, None,
                  letters, magazines, newspapers, parcels)
     return '', 200
