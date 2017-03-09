@@ -4,7 +4,7 @@ from cv2 import countNonZero, imread, IMREAD_GRAYSCALE, inRange, absdiff
 
 
 def is_empty(filename):
-    background = imread("test_images/empty1.jpg", IMREAD_GRAYSCALE)
+    background = imread("bwempty.jpg", IMREAD_GRAYSCALE)
     image = imread(filename, IMREAD_GRAYSCALE)
     result = absdiff(background, image)
     subtracted = inRange(result, 0x50, 0xff)
@@ -13,6 +13,8 @@ def is_empty(filename):
 
 
 def is_same(last_snapshot, filename):
+    if last_snapshot is None:
+        return False
     image = imread(filename, IMREAD_GRAYSCALE)
     result = absdiff(last_snapshot, image)
     subtracted = inRange(result, 0x50, 0xff)
