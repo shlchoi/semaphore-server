@@ -4,9 +4,10 @@ from cv2 import countNonZero, imread, IMREAD_GRAYSCALE, inRange, absdiff
 from image_algorithm.main import run_algorithm
 
 
-def is_empty(mailbox, filename):
-    background = imread("empty_{0}.jpg".format(mailbox), IMREAD_GRAYSCALE)
+def is_empty(filename, empty):
+    background = imread(empty, IMREAD_GRAYSCALE)
     image = imread(filename, IMREAD_GRAYSCALE)
+
     result = absdiff(background, image)
     subtracted = inRange(result, 0x50, 0xff)
 
@@ -14,11 +15,12 @@ def is_empty(mailbox, filename):
 
 
 def is_same(last_snapshot, filename):
-    if last_snapshot is None:
+    snapshot = imread(last_snapshot, IMREAD_GRAYSCALE)
+    if snapshot is None:
         return False
 
     image = imread(filename, IMREAD_GRAYSCALE)
-    result = absdiff(last_snapshot, image)
+    result = absdiff(snapshot, image)
     subtracted = inRange(result, 0x50, 0xff)
 
     return countNonZero(subtracted) < 120
@@ -30,9 +32,9 @@ def categorise(mailbox):
     return run_algorithm(image, empty)
 
 
-def process_image(db_url, email, secret, mailbox, filename):
+def process_image(db_url, email, secret, mailbox):
+    print("Beginning categorisation for {0}".format(mailbox))
     timestamp = notify(db_url, email, secret, mailbox)
     delivery = categorise(mailbox)
     print(delivery)
-    process_data(db_url, email, secret, mailbox, timestamp,
-                 **delivery)
+    process_data(db_url, email, secret, mailbox, timestamp, **delivery)

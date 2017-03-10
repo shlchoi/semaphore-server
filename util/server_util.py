@@ -4,11 +4,11 @@ from flask import Flask, request, abort
 from util.data_util import process_data
 from util.img_util import is_empty, is_same, process_image
 from cv2 import imread, IMREAD_GRAYSCALE
-from multiprocessing import Pool
+from os import rename
+from threading import Thread
 
 
 app = Flask(__name__)
-pool = Pool(processes=1)
 
 
 def load_config(config_path):
@@ -34,22 +34,29 @@ def snapshot():
     mailbox = request.form[u'mailbox']
     image = request.files[u'snapshot']
 
+    new_snapshot = u'new_{0}.jpg'.format(mailbox)
     filename = u'{0}.jpg'.format(mailbox)
-    last_snapshot = imread(filename, IMREAD_GRAYSCALE)
+    empty = u'empty_{0}.jpg'.format(mailbox)
 
-    image.save(filename)
+    if not isfile(empty):
+        abort(500, 'Mailbox is not calibrated')
 
-    if not is_same(last_snapshot, filename):
-        if is_empty(mailbox, filename):
+    image.save(new_snapshot)
+
+    if not is_same(filename, new_snapshot):
+        rename(new_snapshot, filename)
+        if is_empty(filename, empty):
             print("is empty")
-            process_data(app.config['db_url'], app.config['email'], app.config['secret'], mailbox,)
-            # pool.apply_async(func=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
-            #                                           mailbox,))
+            t = Thread(target=process_data, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+                                                  mailbox,))
+            t.daemon = True
+            t.start()
         else:
             print("is new")
-            process_image(app.config['db_url'], app.config['email'], app.config['secret'], mailbox, filename,)
-            # pool.apply_async(func=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
-            #                                            mailbox, filename,))
+            t = Thread(target=process_image, args=(app.config['db_url'], app.config['email'], app.config['secret'],
+                                                   mailbox,))
+            t.daemon = True
+            t.start()
     else:
         print("is same")
     return '', 200
