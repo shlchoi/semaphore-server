@@ -11,7 +11,7 @@ def is_empty(filename, empty):
     result = absdiff(background, image)
     subtracted = inRange(result, 0x10, 0xff)
 
-    return countNonZero(subtracted) < 10000
+    return countNonZero(subtracted) < 6000
 
 
 def is_same(last_snapshot, filename):
@@ -23,7 +23,7 @@ def is_same(last_snapshot, filename):
     result = absdiff(snapshot, image)
     subtracted = inRange(result, 0x10, 0xff)
 
-    return countNonZero(subtracted) < 10000
+    return countNonZero(subtracted) < 6000
 
 
 def categorise(mailbox):
