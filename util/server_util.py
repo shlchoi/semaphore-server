@@ -3,7 +3,6 @@ from os.path import isfile
 from flask import Flask, request, abort
 from util.data_util import process_data
 from util.img_util import is_empty, is_same, process_image
-from cv2 import imread, IMREAD_GRAYSCALE
 from os import rename
 from threading import Thread
 

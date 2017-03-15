@@ -9,9 +9,9 @@ def is_empty(filename, empty):
     image = imread(filename, IMREAD_GRAYSCALE)
 
     result = absdiff(background, image)
-    subtracted = inRange(result, 0x50, 0xff)
+    subtracted = inRange(result, 0x10, 0xff)
 
-    return countNonZero(subtracted) < 120
+    return countNonZero(subtracted) < 10000
 
 
 def is_same(last_snapshot, filename):
@@ -21,9 +21,9 @@ def is_same(last_snapshot, filename):
 
     image = imread(filename, IMREAD_GRAYSCALE)
     result = absdiff(snapshot, image)
-    subtracted = inRange(result, 0x50, 0xff)
+    subtracted = inRange(result, 0x10, 0xff)
 
-    return countNonZero(subtracted) < 120
+    return countNonZero(subtracted) < 10000
 
 
 def categorise(mailbox):
