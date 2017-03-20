@@ -35,7 +35,7 @@ def snapshot():
 
     new_snapshot = u'new_{0}.jpg'.format(mailbox)
     filename = u'{0}.jpg'.format(mailbox)
-    empty = u'empty_{0}.jpg'.format(mailbox)
+    empty = u'empty_{0}_{1}.jpg'.format(0, mailbox)
 
     if not isfile(empty):
         abort(500, 'Mailbox is not calibrated')
