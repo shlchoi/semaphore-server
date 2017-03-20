@@ -27,7 +27,7 @@ def is_same(last_snapshot, filename):
 
 
 def categorise(mailbox):
-    empty = "empty_{0}.jpg".format(mailbox)
+    empty = "empty_0_{0}.jpg".format(mailbox)
     image = "{0}.jpg".format(mailbox)
     return run_algorithm(image, empty)
 

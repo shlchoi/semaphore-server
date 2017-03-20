@@ -66,14 +66,16 @@ def calibrate():
     if u'mailbox' not in request.form:
         abort(400, 'Mailbox Id was not provided')
 
-    if u'snapshot' not in request.files:
-        abort(400, 'Image was not provided')
+    if u'calibrate_0' not in request.files or u'calibrate_1' not in request.files:
+        abort(400, 'Two images were not provided')
 
     mailbox = request.form[u'mailbox']
-    image = request.files[u'snapshot']
+    image_0 = request.files[u'calibrate_0']
+    image_1 = request.files[u'calibrate_1']
 
-    filename = u'empty_{0}.jpg'.format(mailbox)
-    image.save(filename)
+    filename = u'empty_{0}_{1}.jpg'
+    image_0.save(filename.format(0, mailbox))
+    image_1.save(filename.format(1, mailbox))
     return '', 200
 
 
