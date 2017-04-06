@@ -17,12 +17,15 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 * [iOS Application](https://github.com/shlchoi/semaphore-ios)
 
 ## Installation Instructions
+### Checkout from Git
+1. Clone using `git clone --recursive git@github.com:shlchoi/semaphore-server.git`
+
 ### Install Requirements
-1. Run `pip install -r requirements.txt` from root folder
+2. Run `pip install -r requirements.txt` from root folder
 
 ### Configure server
-2. Create a file called `config`
-3. In `config`, add the following information:
+3. Create a file called `config`
+4. In `config`, add the following information:
 ```
 {
     "db_url": [url to Firebase Realtime Database Instance],
@@ -33,7 +36,7 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 ```
 
 ### Verify 
-4. Go to `https://localhost:[PORT]/`
+5. Go to `https://localhost:[PORT]/`
 
    A 200 OK response should be recieved.
 
