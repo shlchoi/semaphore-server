@@ -34,6 +34,7 @@ See the [main project page](https://shlchoi.github.io/semaphore) for more inform
 
 ### Verify 
 4. Go to `https://localhost:[PORT]/`
+
    A 200 OK response should be recieved.
 
 
