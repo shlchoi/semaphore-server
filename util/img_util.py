@@ -1,3 +1,14 @@
+"""
+ Semaphore - Server
+ Web server component of Semaphore
+ See https://shlchoi.github.io/semaphore/ for more information about Semaphore
+
+ data_util.py
+ Copyright (C) 2017 Samson H. Choi
+
+ See https://github.com/shlchoi/semaphore-server/blob/master/LICENSE for license information
+ """
+
 from util.firebase_util import notify
 from util.data_util import process_data
 from cv2 import countNonZero, imread, IMREAD_GRAYSCALE, inRange, absdiff

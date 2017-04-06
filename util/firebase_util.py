@@ -1,3 +1,14 @@
+"""
+ Semaphore - Server
+ Web server component of Semaphore
+ See https://shlchoi.github.io/semaphore/ for more information about Semaphore
+
+ data_util.py
+ Copyright (C) 2017 Matthew Chum, Samson H. Choi
+
+ See https://github.com/shlchoi/semaphore-server/blob/master/LICENSE for license information
+ """
+
 from firebase import firebase
 from math import ceil
 from time import time

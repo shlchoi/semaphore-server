@@ -1,3 +1,14 @@
+"""
+ Semaphore - Server
+ Web server component of Semaphore
+ See https://shlchoi.github.io/semaphore/ for more information about Semaphore
+
+ timing.py
+ Copyright (C) 2017 Matthew Chum, Samson H. Choi
+
+ See https://github.com/shlchoi/semaphore-server/blob/master/LICENSE for license information
+ """
+
 from datetime import datetime
 
 
